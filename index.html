@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1220">
+<title>LottoLab USA — Uso Pessoal (Powerball / Mega Millions)</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LottoLab USA">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Análise estatística pessoal do Powerball e da Mega Millions com dados oficiais. Nenhuma análise altera a probabilidade do sorteio.">
+<style id="pwa-style">
+  #installBtn{display:none;align-items:center;gap:9px;margin:22px auto 0;background:linear-gradient(135deg,#60a5fa,#1d4ed8);
+    color:#04152e;border:0;border-radius:30px;padding:12px 22px;font-size:15px;font-weight:800;cursor:pointer;
+    box-shadow:0 10px 24px rgba(29,78,216,.35);transition:.15s}
+  #installBtn:hover{transform:translateY(-2px)}
+  #iosHint{display:none;max-width:520px;margin:18px auto 0;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;font-size:13px;color:var(--mut);line-height:1.6}
+  #iosHint b{color:var(--txt)}
+</style>
+<style>
+  :root{
+    --bg:#0b1220; --card:#151f38; --card2:#1b2745; --line:#26324f;
+    --txt:#e8eefc; --mut:#9fb0d0; --dim:#6b7ba0;
+    --acc:#60a5fa; --acc2:#1d4ed8; --accInk:#04152e;
+    --gold:#fbbf24; --red:#f87171; --green:#4ade80; --blue:#60a5fa;
+    --shadow:0 14px 40px rgba(0,0,0,.4); --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--txt);
+    background:radial-gradient(1200px 600px at 80% -10%,#16233f 0,transparent 60%),
+               radial-gradient(900px 500px at -10% 8%,#132132 0,transparent 55%),var(--bg);
+    min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 18px 90px}
+  a{color:inherit}
+
+  #home{min-height:100vh;display:flex;flex-direction:column}
+  .home-hero{max-width:1120px;margin:0 auto;padding:64px 18px 26px;text-align:center;width:100%}
+  .brandbig{display:inline-flex;align-items:center;gap:13px;margin-bottom:26px}
+  .brandbig .mark{width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,var(--acc),var(--acc2));
+    display:grid;place-items:center;font-size:26px;box-shadow:0 10px 26px rgba(29,78,216,.4)}
+  .brandbig .nm{font-size:26px;font-weight:800;letter-spacing:.3px;text-align:left}
+  .brandbig .nm small{display:block;font-size:12px;color:var(--mut);font-weight:600;letter-spacing:.5px}
+  .home-hero h1{font-size:38px;font-weight:800;letter-spacing:-.8px;line-height:1.1;
+    background:linear-gradient(120deg,#fff 20%,#9fc9ff 60%,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .home-hero p{color:var(--mut);max-width:600px;margin:16px auto 0;font-size:16px}
+  .pill{display:inline-flex;gap:8px;align-items:center;margin-top:22px;background:var(--card);border:1px solid var(--line);
+    border-radius:30px;padding:8px 16px;font-size:12.5px;color:var(--mut)}
+  .pill b{color:var(--acc)}
+  .privtag{display:inline-block;margin-top:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);
+    color:var(--gold);font-size:11.5px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.4px}
+
+  .pick-h{max-width:1120px;margin:34px auto 16px;padding:0 18px;width:100%;display:flex;align-items:center;gap:10px}
+  .pick-h .ln{flex:1;height:1px;background:var(--line)}
+  .pick-h span{font-size:12.5px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+
+  .modgrid{max-width:1120px;margin:0 auto;padding:0 18px;width:100%;
+    display:grid;grid-template-columns:repeat(2,1fr);gap:15px;max-width:640px}
+  @media(max-width:560px){.modgrid{grid-template-columns:1fr}}
+  .modcard{position:relative;overflow:hidden;cursor:pointer;border-radius:18px;padding:22px 20px 20px;
+    background:var(--card);border:1px solid var(--line);transition:.2s;text-align:left}
+  .modcard:hover{transform:translateY(-4px);border-color:transparent;box-shadow:var(--shadow)}
+  .modcard .glow{position:absolute;inset:0;opacity:.14;background:var(--mc,#60a5fa);transition:.2s}
+  .modcard:hover .glow{opacity:.26}
+  .modcard .ico{position:relative;width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:25px;
+    background:var(--mc);color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.3);margin-bottom:14px}
+  .modcard .t{position:relative;font-size:18px;font-weight:800}
+  .modcard .d{position:relative;font-size:12.5px;color:var(--mut);margin-top:3px}
+  .modcard .go{position:relative;margin-top:14px;font-size:12.5px;font-weight:700;color:var(--mc-l,#93c5fd);display:flex;align-items:center;gap:6px}
+  .home-foot{text-align:center;color:var(--dim);font-size:12px;margin-top:auto;padding:40px 18px 10px;line-height:1.7}
+
+  #app{display:none}
+  header.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);
+    background:rgba(11,18,32,.85);border-bottom:1px solid var(--line)}
+  .top-in{max-width:1120px;margin:0 auto;padding:13px 18px;display:flex;align-items:center;gap:14px}
+  .backbtn{border:1px solid var(--line);background:var(--card);color:var(--mut);width:38px;height:38px;border-radius:11px;
+    cursor:pointer;font-size:17px;display:grid;place-items:center;transition:.15s;flex:none}
+  .backbtn:hover{color:var(--txt);border-color:var(--acc2)}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px}
+  .logo .mark{width:38px;height:38px;border-radius:11px;flex:none;background:linear-gradient(135deg,var(--acc),var(--acc2));
+    display:grid;place-items:center;font-size:19px}
+  .logo small{display:block;font-size:11px;font-weight:600;color:var(--mut)}
+  .status{margin-left:auto;font-size:12px;color:var(--mut);display:flex;align-items:center;gap:7px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(251,191,36,.15)}
+  .dot.ok{background:var(--green);box-shadow:0 0 0 4px rgba(74,222,128,.15)}
+  .dot.err{background:var(--red);box-shadow:0 0 0 4px rgba(248,113,113,.15)}
+
+  .hero{padding:24px 0 6px}
+  .hero h1{font-size:24px;font-weight:800;letter-spacing:-.3px}
+  .hero p{color:var(--mut);max-width:640px;margin-top:6px;font-size:14.5px}
+
+  nav.tabs{display:flex;gap:8px;margin:18px 0 20px;flex-wrap:wrap}
+  nav.tabs button{border:1px solid var(--line);background:var(--card);color:var(--mut);padding:10px 16px;border-radius:12px;
+    font-size:14px;font-weight:600;cursor:pointer;transition:.18s}
+  nav.tabs button:hover{border-color:var(--acc2);color:var(--txt)}
+  nav.tabs button.active{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accInk);border-color:transparent}
+
+  .grid{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+  .card h3{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .kpi{display:flex;align-items:baseline;gap:8px}.kpi b{font-size:26px;font-weight:800}.kpi span{font-size:13px;color:var(--dim)}
+
+  .balls{display:flex;flex-wrap:wrap;gap:9px}
+  .ball{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;
+    background:var(--card2);border:1px solid var(--line);position:relative;transition:.15s}
+  .ball.hot{background:linear-gradient(135deg,#7f1d1d,#b91c1c);border-color:#ef4444;color:#fff}
+  .ball.cold{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);border-color:#3b82f6;color:#fff}
+  .ball.win{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:var(--accInk)}
+  .ball.bonus{background:linear-gradient(135deg,var(--bonuscolor,#eab308),#92400e);border-color:transparent;color:#2c1600}
+  .ball.sm{width:34px;height:34px;font-size:13px}
+  .ball .tag{position:absolute;bottom:-16px;font-size:10px;color:var(--mut);white-space:nowrap}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--mut)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+  .bar{height:9px;border-radius:6px;background:var(--card2);overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--blue))}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:0}.row .lab{font-size:13.5px;color:var(--mut)}.row .val{font-weight:700;font-size:14px}
+
+  label.fld{display:block;margin-bottom:16px}
+  label.fld .lt{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:7px;font-weight:600}
+  label.fld .lt b{color:var(--acc)}
+  input[type=range]{width:100%;accent-color:var(--acc);height:6px}
+  .hintline{font-size:12px;color:var(--dim);margin-top:-8px;margin-bottom:14px}
+  button.primary{width:100%;border:0;padding:14px;border-radius:13px;cursor:pointer;font-size:15px;font-weight:800;
+    background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accInk);box-shadow:0 8px 20px rgba(0,0,0,.25);transition:.15s}
+  button.primary:hover{transform:translateY(-1px)}
+  button.ghost{border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:11px 14px;border-radius:11px;cursor:pointer;font-weight:600;font-size:13.5px}
+  input[type=number],textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font-size:14px;font-family:inherit}
+
+  .score-wrap{text-align:center;padding:8px 0 4px}
+  .gauge{position:relative;width:180px;height:180px;margin:0 auto}.gauge svg{transform:rotate(-90deg)}
+  .gauge .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+  .gauge .mid b{font-size:40px;font-weight:800;line-height:1}.gauge .mid span{font-size:12px;color:var(--mut)}
+  .score-txt{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14px}
+  .score-txt .em{color:var(--acc);font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12.5px;color:var(--mut)}
+  .chip.g{border-color:#166534;color:var(--green)}.chip.y{border-color:#854d0e;color:var(--gold)}
+  .gamecard{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:12px}
+  .gamecard .gh{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+  .gamecard .gs{font-weight:800;font-size:15px;color:var(--acc)}
+  .disc{background:linear-gradient(135deg,rgba(251,191,36,.09),rgba(251,191,36,.03));border:1px solid rgba(251,191,36,.28);
+    border-radius:14px;padding:15px 17px;font-size:13.5px;color:#fde9b8}.disc b{color:var(--gold)}
+  .edu{font-size:14px;color:var(--mut)}.edu h4{color:var(--txt);margin:16px 0 6px;font-size:15px}.edu p{margin-bottom:8px}
+  .skeleton{color:var(--dim);text-align:center;padding:40px 0;font-size:14px}
+  .spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;margin:0 auto 14px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hidden{display:none}
+  .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:26px;line-height:1.7}.foot b{color:var(--mut)}
+  .winbar-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .winbar-lab{flex:1;min-width:220px}
+  .winbar-lab b{display:block;font-size:14px;margin-bottom:2px}
+  .winbar-lab span{font-size:12.5px;color:var(--mut)}
+  .segmented{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:4px;gap:3px}
+  .segmented button{border:0;background:transparent;color:var(--mut);font-weight:700;font-size:13.5px;padding:8px 15px;border-radius:9px;cursor:pointer;transition:.15s}
+  .segmented button:hover{color:var(--txt)}
+  .segmented button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accInk)}
+  .winbar-note{font-size:12px;color:var(--dim);margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- ================= HOME ================= -->
+<div id="home">
+  <div class="home-hero">
+    <div class="brandbig">
+      <div class="mark">🎰</div>
+      <div class="nm">LottoLab USA<small>USO PESSOAL · NÃO COMERCIAL</small></div>
+    </div>
+    <h1>Powerball e Mega Millions<br>com dados reais, não com achismo</h1>
+    <p>Histórico oficial completo, estratégias com pesos e avaliação de jogos — mesma metodologia do LottoLab, aplicada às loterias dos EUA.</p>
+    <div class="pill">📡 Dados oficiais · <b>2 loterias</b> · uso pessoal</div>
+    <div class="privtag">🔒 Versão privada — não vendida, apenas para uso próprio</div>
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin-top:22px">
+      <button id="installBtn">⬇️ Instalar app</button>
+    </div>
+    <div id="iosHint">📲 Para instalar no iPhone/iPad: toque em <b>Compartilhar</b> e depois em <b>“Adicionar à Tela de Início”</b>.</div>
+  </div>
+
+  <div class="pick-h"><div class="ln"></div><span>Escolha uma loteria</span><div class="ln"></div></div>
+  <div class="modgrid" id="modgrid"></div>
+
+  <div class="home-foot">
+    resultados oficiais via NY State Open Data (data.ny.gov) — Powerball e Mega Millions são loterias multiestaduais dos EUA (MUSL)
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app">
+  <header class="top">
+    <div class="top-in">
+      <button class="backbtn" id="backBtn" title="Voltar">←</button>
+      <div class="logo"><div class="mark" id="appIcon">🎰</div><div id="appName">Powerball<small id="appRule">5 de 69 + Powerball</small></div></div>
+      <div class="status"><span id="dot" class="dot"></span><span id="statusTxt">Carregando…</span></div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="hero"><h1 id="heroTitle">Análise estatística</h1>
+      <p>Explore os padrões históricos, monte estratégias e avalie seus jogos — sabendo que nada disso altera a probabilidade do sorteio.</p></div>
+
+    <nav class="tabs">
+      <button class="active" data-tab="painel">📊 Painel</button>
+      <button data-tab="lab">🧪 Laboratório</button>
+      <button data-tab="avaliar">🎯 Avaliar jogo</button>
+      <button data-tab="sobre">📚 Entenda</button>
+    </nav>
+
+    <div id="loading" class="card skeleton"><div class="spinner"></div>Baixando o histórico oficial de sorteios…</div>
+
+    <section id="painel" class="hidden">
+      <div class="card winbar" style="margin-bottom:16px">
+        <div class="winbar-in">
+          <div class="winbar-lab"><b>📐 Base de análise</b><span>Quantos sorteios recentes entram em todas as estatísticas (painel, gerador e LottoScore).</span></div>
+          <div class="segmented" id="winSeg">
+            <button data-w="25">25</button>
+            <button data-w="50">50</button>
+            <button data-w="100" class="on">100</button>
+            <button data-w="all">Todos</button>
+          </div>
+        </div>
+        <div class="winbar-note" id="winNote"></div>
+      </div>
+      <div class="grid g3" style="margin-bottom:16px">
+        <div class="card"><h3>🎫 Último sorteio</h3><div class="kpi"><b id="kLast">—</b></div></div>
+        <div class="card"><h3>🗂️ Sorteios analisados</h3><div class="kpi"><b id="kTotal">—</b><span>sorteios</span></div></div>
+        <div class="card"><h3>➗ Soma média</h3><div class="kpi"><b id="kSum">—</b><span>por jogo</span></div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px"><h3>🏆 Dezenas do último resultado</h3><div id="lastBalls" class="balls"></div></div>
+      <div class="grid g2">
+        <div class="card">
+          <h3>🔥 Mais sorteadas (quentes)</h3><div id="hotBalls" class="balls" style="margin-bottom:22px"></div>
+          <h3>❄️ Menos sorteadas (frias)</h3><div id="coldBalls" class="balls" style="margin-bottom:6px"></div>
+          <div class="legend"><span><i style="background:#b91c1c"></i>Quente</span><span><i style="background:#1d4ed8"></i>Fria</span><span>nº pequeno = vezes sorteada</span></div>
+        </div>
+        <div class="card"><h3>⏳ Maiores atrasos</h3><div id="delayList"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px" id="bonusCard"><h3 id="bonusTitle">🎱 Bola extra</h3>
+        <div class="grid g2">
+          <div><div style="font-size:12.5px;color:var(--mut);margin-bottom:8px">Mais sorteadas</div><div id="bonusHot" class="balls"></div></div>
+          <div><div style="font-size:12.5px;color:var(--mut);margin-bottom:8px">Menos sorteadas</div><div id="bonusCold" class="balls"></div></div>
+        </div>
+        <div style="font-size:11.5px;color:var(--dim);margin-top:12px">A bola extra é sorteada de forma independente das dezenas principais — não entra no LottoScore.</div>
+      </div>
+      <div class="card" style="margin-top:16px"><h3>⚖️ Padrões típicos do sorteio</h3>
+        <div class="grid g3">
+          <div><div class="row"><span class="lab">Pares (média)</span><span class="val" id="pAvg">—</span></div><div class="row"><span class="lab">Ímpares (média)</span><span class="val" id="iAvg">—</span></div></div>
+          <div><div class="row"><span class="lab">Soma mínima vista</span><span class="val" id="sMin">—</span></div><div class="row"><span class="lab">Soma máxima vista</span><span class="val" id="sMax">—</span></div></div>
+          <div><div class="row"><span class="lab">Primos (média)</span><span class="val" id="prAvg">—</span></div><div class="row"><span class="lab">Faixa saudável de soma</span><span class="val" id="sBand">—</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lab" class="hidden">
+      <div class="grid g2">
+        <div class="card"><h3>🧪 Monte sua estratégia</h3>
+          <p style="color:var(--mut);font-size:13.5px;margin-bottom:18px">Ajuste o peso de cada critério. O gerador prioriza dezenas que melhor atendem à combinação.</p>
+          <label class="fld"><div class="lt">🔥 Frequência (quentes) <b id="w1v">40%</b></div><input type="range" id="w1" min="0" max="100" value="40"></label>
+          <label class="fld"><div class="lt">⏳ Atraso (atrasadas) <b id="w2v">20%</b></div><input type="range" id="w2" min="0" max="100" value="20"></label>
+          <label class="fld"><div class="lt">➗ Soma equilibrada <b id="w3v">20%</b></div><input type="range" id="w3" min="0" max="100" value="20"></label>
+          <label class="fld"><div class="lt">⚖️ Pares × Ímpares <b id="w4v">20%</b></div><input type="range" id="w4" min="0" max="100" value="20"></label>
+          <div class="hintline">Os pesos são normalizados automaticamente. A bola extra é sorteada por frequência histórica + variação aleatória.</div>
+          <div style="margin-bottom:14px"><div class="lt" style="color:var(--mut);font-size:13px;font-weight:600;margin-bottom:6px">Quantidade de jogos</div>
+            <input type="number" id="qty" value="3" min="1" max="10"></div>
+          <button class="primary" id="genBtn">Gerar jogos ✨</button>
+        </div>
+        <div class="card"><h3>🎟️ Jogos gerados</h3>
+          <div id="genOut"><div class="skeleton" style="padding:30px 0">Ajuste os pesos e clique em <b>Gerar jogos</b>.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="avaliar" class="hidden">
+      <div class="grid g2">
+        <div class="card"><h3>🎯 Avalie um jogo</h3>
+          <p style="color:var(--mut);font-size:13.5px;margin-bottom:14px" id="evalHint">Digite as dezenas principais separadas por espaço ou vírgula (sem a bola extra).</p>
+          <textarea id="evalIn" rows="3" placeholder="ex: 1 3 4 6 8 ..."></textarea>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button class="primary" id="evalBtn" style="flex:2">Calcular LottoScore</button>
+            <button class="ghost" id="evalRand" style="flex:1">Sortear p/ testar</button>
+          </div>
+          <div id="evalErr" style="color:var(--red);font-size:13px;margin-top:10px"></div>
+        </div>
+        <div class="card"><h3>📈 Resultado</h3>
+          <div id="evalOut"><div class="skeleton" style="padding:30px 0">Seu LottoScore aparece aqui.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sobre" class="hidden">
+      <div class="card edu" style="margin-bottom:16px;border-color:rgba(96,165,250,.3)"><h3 style="color:var(--acc)">🔬 Como calculamos (sem mistério)</h3>
+        <p>Frequência, atraso, desvio-padrão da soma, proporção de pares/ímpares e primos — dados reais, calculados na hora, a partir do histórico oficial. O LottoScore combina tudo isso com uma curva de distribuição normal num índice de 0 a 1000. A bola extra (Powerball/Mega Ball) é sorteada de uma faixa numérica separada e independente, por isso não entra nesse cálculo.</p>
+      </div>
+      <div class="disc" style="margin-bottom:16px"><b>⚠️ Importante — leia com atenção.</b> Nenhuma análise desta ferramenta altera a probabilidade de um sorteio. Cada combinação tem <b>exatamente a mesma chance</b> de ser sorteada. As estatísticas servem para você <b>entender os dados e organizar suas escolhas</b> — não para prever resultados nem aumentar chances de ganhar. Jogue com responsabilidade.</div>
+      <div class="card edu"><h3>📚 Centro de estudos (prévia)</h3>
+        <h4>Dezena "quente" ou "fria"?</h4><p>É apenas quantas vezes um número apareceu no histórico. Descreve o passado — <b>não</b> torna nenhum número mais provável no próximo sorteio.</p>
+        <h4>O que é "atraso"?</h4><p>Há quantos sorteios uma dezena não sai. O sorteio não tem memória: um número atrasado não está "devendo" aparecer.</p>
+        <h4>Como funciona o LottoScore?</h4><p>Um índice de 0 a 1000 que mede o quanto um jogo se parece com o perfil típico dos resultados históricos: soma na faixa comum, equilíbrio pares/ímpares, boa distribuição e presença razoável de primos. Score alto <b>não</b> significa maior chance de ganhar.</p>
+        <h4>Por que tem valor então?</h4><p>Organiza a forma de jogar, evita combinações improváveis de "cara", permite comparar estratégias objetivamente e ensina probabilidade no caminho.</p>
+      </div>
+    </section>
+
+    <div class="foot"><b>LottoLab USA</b> — uso pessoal, dados oficiais via NY State Open Data (data.ny.gov)<br></div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG DAS LOTERIAS (EUA) ============ */
+// Fonte de dados: NY State Open Data (Socrata), que publica os sorteios oficiais das
+// loterias multiestaduais Powerball e Mega Millions (Multi-State Lottery Association).
+const LOTTERIES={
+  powerball:{
+    key:"powerball", name:"Powerball", pick:5, min:1, max:69, icon:"🔴",
+    color:"#dc2626", ink:"#ffffff", light:"#fca5a5",
+    bonus:{name:"Powerball", min:1, max:26, color:"#dc2626"},
+    dataUrl:"https://data.ny.gov/resource/d6yy-54nr.json"
+  },
+  megamillions:{
+    key:"megamillions", name:"Mega Millions", pick:5, min:1, max:70, icon:"🔵",
+    color:"#1d4ed8", ink:"#ffffff", light:"#93c5fd",
+    bonus:{name:"Mega Ball", min:1, max:25, color:"#eab308"},
+    dataUrl:"https://data.ny.gov/resource/5xaw-6ayf.json"
+  }
+};
+
+/* ============ ESTADO ============ */
+let CFG=null, DRAWS=[], STATS=null, WIN=100;
+const $=id=>document.getElementById(id);
+
+/* ============ HOME ============ */
+function renderHome(){
+  $("modgrid").innerHTML=Object.keys(LOTTERIES).map(key=>{
+    const l=LOTTERIES[key];
+    return `<div class="modcard" data-key="${key}" style="--mc:${l.color};--mc-l:${l.light}">
+      <div class="glow"></div>
+      <div class="ico">${l.icon}</div>
+      <div class="t">${l.name}</div>
+      <div class="d">${l.pick} números (${l.min}–${l.max}) + ${l.bonus.name}</div>
+      <div class="go">Analisar →</div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".modcard").forEach(c=>c.onclick=()=>openApp(c.dataset.key));
+}
+
+/* ============ ABRIR APP ============ */
+function openApp(key){
+  CFG=LOTTERIES[key]; DRAWS=[]; STATS=null; WIN=100;
+  $("winSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.w==="100"));
+  document.documentElement.style.setProperty("--acc",CFG.color);
+  document.documentElement.style.setProperty("--acc2",shade(CFG.color,-18));
+  document.documentElement.style.setProperty("--accInk",CFG.ink);
+  document.documentElement.style.setProperty("--bonuscolor",CFG.bonus.color);
+  $("appIcon").textContent=CFG.icon; $("appIcon").style.background=`linear-gradient(135deg,${CFG.color},${shade(CFG.color,-18)})`;
+  $("appName").firstChild.textContent=CFG.name;
+  $("appRule").textContent=`${CFG.pick} de ${CFG.max} + ${CFG.bonus.name}`;
+  $("heroTitle").textContent="Análise estatística · "+CFG.name;
+  $("evalHint").textContent=`Digite ${CFG.pick} dezenas principais (de ${CFG.min} a ${CFG.max}), separadas por espaço ou vírgula. A bola extra não entra no cálculo.`;
+  $("bonusTitle").textContent="🎱 "+CFG.bonus.name+" (bola extra)";
+  $("home").style.display="none"; $("app").style.display="block"; window.scrollTo(0,0);
+  $("loading").classList.remove("hidden"); ["painel","lab","avaliar","sobre"].forEach(id=>$(id).classList.add("hidden"));
+  document.querySelectorAll("nav.tabs button").forEach((b,i)=>b.classList.toggle("active",i===0));
+  $("genOut").innerHTML='<div class="skeleton" style="padding:30px 0">Ajuste os pesos e clique em <b>Gerar jogos</b>.</div>';
+  $("evalOut").innerHTML='<div class="skeleton" style="padding:30px 0">Seu LottoScore aparece aqui.</div>';
+  $("evalIn").value=""; $("evalErr").textContent="";
+  load();
+}
+$("backBtn").onclick=()=>{$("app").style.display="none";$("home").style.display="flex";window.scrollTo(0,0);};
+
+/* ============ DADOS (data.ny.gov) ============ */
+function setStatus(t,c){$("statusTxt").textContent=t;$("dot").className="dot "+(c||"");}
+function parseRow(o){
+  if(CFG.key==="powerball"){
+    const parts=(o.winning_numbers||"").trim().split(/\s+/).map(Number);
+    return {nums:parts.slice(0,5), bonus:parts[5]};
+  }
+  // Mega Millions
+  const nums=(o.winning_numbers||"").trim().split(/\s+/).map(Number);
+  return {nums, bonus:Number(o.mega_ball)};
+}
+async function load(){
+  try{
+    const r=await fetch(CFG.dataUrl+"?$limit=5000");
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const arr=await r.json();
+    if(!Array.isArray(arr)) throw new Error("formato inesperado");
+    DRAWS=arr.map(o=>{
+      const {nums,bonus}=parseRow(o);
+      const dateStr=(o.draw_date||"").slice(0,10);
+      return {date:dateStr, nums, bonus};
+    }).filter(d=>d.nums.length===CFG.pick && d.nums.every(x=>Number.isFinite(x)) && Number.isFinite(d.bonus))
+      .sort((a,b)=> new Date(a.date)-new Date(b.date));
+    if(!DRAWS.length) throw new Error("vazio");
+    const last=DRAWS[DRAWS.length-1];
+    setStatus("Dados oficiais · sorteio de "+fmtDate(last.date),"ok");
+    compute(); renderPainel();
+    $("loading").classList.add("hidden"); $("painel").classList.remove("hidden");
+  }catch(e){
+    setStatus("Falha ao carregar","err");
+    $("loading").innerHTML='<div style="color:var(--red)">Não foi possível baixar os dados oficiais.<br><span style="color:var(--dim);font-size:13px">Verifique a conexão e recarregue. Uma vez instalado, o app usa o último dado salvo em cache quando estiver offline.</span></div>';
+  }
+}
+function fmtDate(iso){ if(!iso) return "—"; const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y; }
+
+/* ============ MOTOR (genérico) ============ */
+function isPrime(n){if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;}
+function std(arr,mean){return Math.sqrt(arr.reduce((a,x)=>a+(x-mean)**2,0)/arr.length)||1;}
+function compute(){
+  const R=CFG.max-CFG.min+1;
+  const work = (WIN==='all') ? DRAWS : DRAWS.slice(-WIN);
+  const N=work.length;
+  const freq={},lastSeen={};
+  for(let i=CFG.min;i<=CFG.max;i++){freq[i]=0;lastSeen[i]=null;}
+  const bFreq={},bLastSeen={};
+  for(let i=CFG.bonus.min;i<=CFG.bonus.max;i++){bFreq[i]=0;bLastSeen[i]=null;}
+  const sums=[],pairsArr=[],primesArr=[];let sMin=1e9,sMax=-1;
+  work.forEach((d,idx)=>{
+    let s=0,p=0,pr=0;
+    d.nums.forEach(x=>{freq[x]++;lastSeen[x]=idx;s+=x;if(x%2===0)p++;if(isPrime(x))pr++;});
+    sums.push(s);pairsArr.push(p);primesArr.push(pr);sMin=Math.min(sMin,s);sMax=Math.max(sMax,s);
+    if(d.bonus>=CFG.bonus.min && d.bonus<=CFG.bonus.max){ bFreq[d.bonus]++; bLastSeen[d.bonus]=idx; }
+  });
+  const sumAvg=sums.reduce((a,b)=>a+b,0)/N;
+  const pairAvg=pairsArr.reduce((a,b)=>a+b,0)/N;
+  const primeAvg=primesArr.reduce((a,b)=>a+b,0)/N;
+  const sumStd=std(sums,sumAvg), pairStd=std(pairsArr,pairAvg), primeStd=std(primesArr,primeAvg);
+  const delay={};for(let i=CFG.min;i<=CFG.max;i++)delay[i]=lastSeen[i]===null?N:(N-1-lastSeen[i]);
+  const order=[];for(let i=CFG.min;i<=CFG.max;i++)order.push(i);
+  const bOrder=[];for(let i=CFG.bonus.min;i<=CFG.bonus.max;i++)bOrder.push(i);
+  STATS={N,R,freq,delay,sumAvg,pairAvg,primeAvg,sumStd,pairStd,primeStd,sMin,sMax,
+    hot:[...order].sort((a,b)=>freq[b]-freq[a]),
+    cold:[...order].sort((a,b)=>freq[a]-freq[b]),
+    delayed:[...order].sort((a,b)=>delay[b]-delay[a]),
+    sumBandLo:Math.round(sumAvg-1.5*sumStd), sumBandHi:Math.round(sumAvg+1.5*sumStd),
+    bonusFreq:bFreq,
+    bonusHot:[...bOrder].sort((a,b)=>bFreq[b]-bFreq[a]),
+    bonusCold:[...bOrder].sort((a,b)=>bFreq[a]-bFreq[b])};
+}
+const pad=n=>String(n).padStart(2,"0");
+function ball(n,cls,tag){return `<div class="ball ${cls||""}">${pad(n)}${tag?`<span class="tag">${tag}</span>`:""}</div>`;}
+
+function renderPainel(){
+  const last=DRAWS[DRAWS.length-1], topN=Math.min(8,STATS.R);
+  $("kLast").textContent=fmtDate(last.date);
+  $("kTotal").textContent=STATS.N.toLocaleString("pt-BR");
+  $("kSum").textContent=Math.round(STATS.sumAvg);
+  $("lastBalls").innerHTML=[...last.nums].sort((a,b)=>a-b).map(n=>ball(n,"win")).join("")+ball(last.bonus,"bonus");
+  $("hotBalls").innerHTML=STATS.hot.slice(0,topN).map(n=>ball(n,"hot sm",STATS.freq[n]+"x")).join("");
+  $("coldBalls").innerHTML=STATS.cold.slice(0,topN).map(n=>ball(n,"cold sm",STATS.freq[n]+"x")).join("");
+  const maxD=STATS.delay[STATS.delayed[0]]||1;
+  $("delayList").innerHTML=STATS.delayed.slice(0,8).map(n=>{
+    const d=STATS.delay[n],pct=Math.round(d/maxD*100);
+    return `<div class="row"><span class="lab">Dezena <b style="color:var(--txt)">${pad(n)}</b></span><span class="val">${d} sorteio${d!==1?"s":""}</span></div><div class="bar"><i style="width:${pct}%"></i></div>`;
+  }).join("");
+  const bTopN=Math.min(6, CFG.bonus.max-CFG.bonus.min+1);
+  $("bonusHot").innerHTML=STATS.bonusHot.slice(0,bTopN).map(n=>ball(n,"bonus sm",STATS.bonusFreq[n]+"x")).join("");
+  $("bonusCold").innerHTML=STATS.bonusCold.slice(0,bTopN).map(n=>ball(n,"bonus sm",STATS.bonusFreq[n]+"x")).join("");
+  $("pAvg").textContent=STATS.pairAvg.toFixed(1);
+  $("iAvg").textContent=(CFG.pick-STATS.pairAvg).toFixed(1);
+  $("prAvg").textContent=STATS.primeAvg.toFixed(1);
+  $("sMin").textContent=STATS.sMin; $("sMax").textContent=STATS.sMax;
+  $("sBand").textContent=STATS.sumBandLo+"–"+STATS.sumBandHi;
+  const work=(WIN==='all')?DRAWS:DRAWS.slice(-WIN);
+  const de=work[0].date, ate=work[work.length-1].date;
+  $("winNote").innerHTML = (WIN==='all')
+    ? `Analisando <b style="color:var(--mut)">todos os ${DRAWS.length}</b> sorteios (de ${fmtDate(de)} a ${fmtDate(ate)}).`
+    : `Analisando os <b style="color:var(--mut)">últimos ${work.length}</b> sorteios (de ${fmtDate(de)} a ${fmtDate(ate)}). Quanto mais sorteios, mais estável é a estatística.`;
+}
+
+/* ============ BASE DE ANÁLISE (janela) ============ */
+$("winSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{
+    if(!STATS)return;
+    $("winSeg").querySelectorAll("button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    WIN = b.dataset.w==='all' ? 'all' : +b.dataset.w;
+    compute(); renderPainel();
+    $("genOut").innerHTML='<div class="skeleton" style="padding:30px 0">Base alterada — clique em <b>Gerar jogos</b> para atualizar.</div>';
+    $("evalOut").innerHTML='<div class="skeleton" style="padding:30px 0">Base alterada — recalcule seu jogo.</div>';
+  };
+});
+
+/* ============ TABS ============ */
+document.querySelectorAll("nav.tabs button").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+    ["painel","lab","avaliar","sobre"].forEach(id=>$(id).classList.add("hidden"));
+    if(!STATS&&b.dataset.tab!=="sobre")return;
+    $(b.dataset.tab).classList.remove("hidden");
+  };
+});
+
+/* ============ LABORATÓRIO ============ */
+["w1","w2","w3","w4"].forEach(id=>$(id).oninput=e=>$(id+"v").textContent=e.target.value+"%");
+function pickBonus(){
+  const bf=STATS.bonusFreq;
+  const maxBF=Math.max(...Object.values(bf))||1;
+  let best=null,bestScore=-1;
+  for(let n=CFG.bonus.min;n<=CFG.bonus.max;n++){
+    const score=(bf[n]/maxBF)*0.55+Math.random()*0.45;
+    if(score>bestScore){bestScore=score;best=n;}
+  }
+  return best;
+}
+$("genBtn").onclick=()=>{
+  if(!STATS)return;
+  const w=[+w1.value,+w2.value,+w3.value,+w4.value],tot=w.reduce((a,b)=>a+b,0)||1;
+  const [wf,wd,ws,wp]=w.map(x=>x/tot);
+  const maxF=Math.max(...Object.values(STATS.freq)),maxD=Math.max(...Object.values(STATS.delay))||1;
+  const qty=Math.max(1,Math.min(10,+$("qty").value||3));
+  let html="";
+  for(let g=0;g<qty;g++){
+    const scored=[];
+    for(let n=CFG.min;n<=CFG.max;n++){
+      const fN=STATS.freq[n]/maxF,dN=STATS.delay[n]/maxD;
+      scored.push({n,score:wf*fN+wd*dN+(ws+wp)*0.5+Math.random()*0.12});
+    }
+    let pick=scored.sort((a,b)=>b.score-a.score).slice(0,CFG.pick).map(x=>x.n);
+    pick=adjustParity(pick,ws+wp); pick.sort((a,b)=>a-b);
+    const ls=lottoScore(pick);
+    const bonusN=pickBonus();
+    html+=`<div class="gamecard"><div class="gh"><span style="color:var(--mut);font-size:13px;font-weight:600">Jogo ${g+1}</span><span class="gs">${ls.score} <span style="font-size:11px;color:var(--dim);font-weight:500">LottoScore</span></span></div>
+      <div class="balls">${pick.map(n=>ball(n,"win sm")).join("")}${ball(bonusN,"bonus sm")}</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:6px">bola extra: ${CFG.bonus.name}</div>
+      <div class="chips" style="margin-top:12px">${ls.chips}</div></div>`;
+  }
+  $("genOut").innerHTML=html;
+};
+function adjustParity(pick,strength){
+  const target=Math.round(STATS.pairAvg);let pairs=pick.filter(x=>x%2===0).length,guard=0;
+  const all=[];for(let i=CFG.min;i<=CFG.max;i++)all.push(i);
+  while(strength>0.15&&Math.abs(pairs-target)>1&&guard++<12){
+    if(pairs<target){const odd=pick.find(x=>x%2!==0),cand=all.find(x=>x%2===0&&!pick.includes(x));if(odd&&cand)pick[pick.indexOf(odd)]=cand;else break;}
+    else{const ev=pick.find(x=>x%2===0),cand=all.find(x=>x%2!==0&&!pick.includes(x));if(ev&&cand)pick[pick.indexOf(ev)]=cand;else break;}
+    pairs=pick.filter(x=>x%2===0).length;
+  }
+  return pick;
+}
+
+/* ============ LOTTOSCORE (genérico) ============ */
+function lottoScore(nums){
+  const s=nums.reduce((a,b)=>a+b,0);
+  const pairs=nums.filter(x=>x%2===0).length;
+  const primes=nums.filter(x=>isPrime(x)).length;
+  const sumScore=Math.exp(-Math.pow((s-STATS.sumAvg)/(1.6*STATS.sumStd),2));
+  const parScore=Math.max(0,1-Math.abs(pairs-STATS.pairAvg)/(2.2*STATS.pairStd));
+  const priScore=Math.max(0,1-Math.abs(primes-STATS.primeAvg)/(2.2*STATS.primeStd));
+  const zsize=STATS.R/5, zones=[0,0,0,0,0];
+  nums.forEach(n=>zones[Math.min(4,Math.floor((n-CFG.min)/zsize))]++);
+  const zoneCover=zones.filter(z=>z>0).length/5;
+  let maxRun=1,run=1;const srt=[...nums].sort((a,b)=>a-b);
+  for(let i=1;i<srt.length;i++){if(srt[i]===srt[i-1]+1){run++;maxRun=Math.max(maxRun,run);}else run=1;}
+  const runLimit=Math.max(3,Math.round(CFG.pick/3));
+  const runScore=Math.max(0,1-Math.max(0,maxRun-runLimit)/(CFG.pick));
+  const spreadScore=zoneCover*0.6+runScore*0.4;
+  const total=sumScore*0.3+parScore*0.25+priScore*0.15+spreadScore*0.3;
+  const chips=[
+    tag("Soma "+s,sumScore>0.6?"g":sumScore>0.3?"y":""),
+    tag(pairs+" pares · "+(CFG.pick-pairs)+" ímpares",parScore>0.55?"g":"y"),
+    tag(primes+" primos",priScore>0.5?"g":"y"),
+    tag(zones.filter(z=>z>0).length+"/5 faixas",zoneCover>0.79?"g":"y"),
+  ].join("");
+  return {score:Math.round(total*1000),s,pairs,primes,zones,maxRun,sumScore,parScore,priScore,spreadScore,chips};
+}
+function tag(t,c){return `<span class="chip ${c||""}">${t}</span>`;}
+function explain(r){
+  const parts=[];
+  parts.push(r.sumScore>0.6?`soma de <span class="em">${r.s}</span>, próxima da média histórica (${Math.round(STATS.sumAvg)})`
+    :`soma de <span class="em">${r.s}</span>, distante da média típica (${Math.round(STATS.sumAvg)})`);
+  parts.push(r.parScore>0.55?`equilíbrio saudável entre pares e ímpares (${r.pairs}×${CFG.pick-r.pairs})`
+    :`paridade fora do usual (${r.pairs}×${CFG.pick-r.pairs})`);
+  parts.push(r.spreadScore>0.7?`boa distribuição das dezenas`:`concentração em poucas regiões`);
+  if(r.maxRun>=Math.max(4,Math.round(CFG.pick/3)+1))parts.push(`sequência longa de ${r.maxRun} números seguidos (rara)`);
+  const q=r.score>=750?"muito aderente":r.score>=550?"razoavelmente aderente":"pouco aderente";
+  return `Este jogo é <span class="em">${q}</span> ao perfil estatístico histórico: ${parts.join("; ")}.`;
+}
+
+/* ============ AVALIAR ============ */
+$("evalRand").onclick=()=>{
+  const s=new Set();while(s.size<CFG.pick)s.add(CFG.min+Math.floor(Math.random()*STATS.R));
+  $("evalIn").value=[...s].sort((a,b)=>a-b).join(" ");
+};
+$("evalBtn").onclick=()=>{
+  const err=$("evalErr");err.textContent="";if(!STATS)return;
+  const raw=$("evalIn").value.split(/[^0-9]+/).filter(Boolean).map(Number),uniq=[...new Set(raw)];
+  if(uniq.length!==CFG.pick){err.textContent=`Digite exatamente ${CFG.pick} dezenas diferentes.`;return;}
+  if(uniq.some(x=>x<CFG.min||x>CFG.max)){err.textContent=`As dezenas devem estar entre ${CFG.min} e ${CFG.max}.`;return;}
+  const r=lottoScore(uniq),circ=2*Math.PI*76,off=circ*(1-r.score/1000);
+  const col=r.score>=750?"var(--green)":r.score>=550?"var(--gold)":"var(--red)";
+  $("evalOut").innerHTML=`<div class="score-wrap">
+    <div class="gauge"><svg width="180" height="180"><circle cx="90" cy="90" r="76" fill="none" stroke="var(--card2)" stroke-width="14"/>
+    <circle cx="90" cy="90" r="76" fill="none" stroke="${col}" stroke-width="14" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg>
+    <div class="mid"><b style="color:${col}">${r.score}</b><span>LOTTOSCORE / 1000</span></div></div>
+    <div class="balls" style="justify-content:center;margin-top:14px">${uniq.sort((a,b)=>a-b).map(n=>ball(n,"win sm")).join("")}</div>
+    <div class="chips" style="justify-content:center;margin-top:14px">${r.chips}</div>
+    <div class="score-txt" style="text-align:left">${explain(r)}</div>
+    <div style="font-size:11.5px;color:var(--dim);margin-top:10px">Lembre-se: um score alto não aumenta a chance de ganhar.</div></div>`;
+};
+
+/* ============ util cor ============ */
+function shade(hex,pct){
+  const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  const f=pct/100;r=Math.round(r+(f<0?r:255-r)*f);g=Math.round(g+(f<0?g:255-g)*f);b=Math.round(b+(f<0?b:255-b)*f);
+  return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+renderHome();
+
+/* ============ PWA: instalação + service worker ============ */
+let deferredPrompt=null;
+const installBtn=$("installBtn"), iosHint=$("iosHint");
+const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+window.addEventListener("beforeinstallprompt",(e)=>{ e.preventDefault(); deferredPrompt=e; });
+window.addEventListener("appinstalled",()=>{ deferredPrompt=null; installBtn.style.display="none"; iosHint.style.display="none"; });
+
+if(!isStandalone){
+  if(isIOS){ iosHint.style.display="block"; }
+  else { installBtn.style.display="inline-flex"; }
+}
+
+installBtn.onclick=async()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt=null;
+    return;
+  }
+  iosHint.style.display="block";
+  iosHint.innerHTML = isIOS
+    ? "📲 No iPhone/iPad (Safari): toque em <b>Compartilhar</b> e depois em <b>“Adicionar à Tela de Início”</b>."
+    : "📲 Para instalar: abra o menu do navegador (⋮ no Chrome/Edge) e escolha <b>“Instalar aplicativo”</b> ou <b>“Adicionar à tela inicial”</b>. Dica: navegue alguns segundos na página e tente de novo — o Chrome libera a instalação após um breve uso. (Firefox e Safari no computador não têm instalação de app.)";
+};
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js")
+      .then(reg=>console.log("SW registrado:",reg.scope))
+      .catch(err=>console.warn("SW não registrou:",err));
+  });
+}
+</script>
+</body>
+</html>

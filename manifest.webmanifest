@@ -1,0 +1,18 @@
+{
+  "name": "LottoLab USA — Uso Pessoal",
+  "short_name": "LottoLab USA",
+  "description": "Análise estatística pessoal do Powerball e da Mega Millions com dados oficiais. Nenhuma análise altera a probabilidade do sorteio.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "categories": ["utilities", "education", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
